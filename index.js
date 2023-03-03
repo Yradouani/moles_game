@@ -1,8 +1,12 @@
 $(document).ready(function () {
     const holes = [...document.querySelectorAll('.hole')];
     let score = 0;
+    let timer = null;
+    let durationOfGame = null;
+    let gameOver = false;
     const sound = new Audio("assets/assets_smash.mp3");
     const music = new Audio("assets/music.mp3");
+    const finalMusic = new Audio("assets/end.mp3");
 
 
     window.addEventListener('mousemove', e => {
@@ -21,10 +25,12 @@ $(document).ready(function () {
 
 
     function random() {
+        if (gameOver) {
+            return;
+        }
         const i = Math.floor(Math.random() * holes.length);
-        const time = Math.floor(Math.random() * (1500 - 250 + 1) + 250)
+        const time = Math.floor(Math.random() * (1500 - 450 + 1) + 450)
         const hole = holes[i];
-        let timer = null;
 
         const newImg = $("<img>")
         newImg.addClass('mole')
@@ -45,30 +51,56 @@ $(document).ready(function () {
 
         $(hole).append(newImg)
 
+
         timer = setTimeout(() => {
             newImg.remove();
-            random()
+            if (!gameOver) {
+                random()
+            }
         }, time)
+
     }
+    // Créer la div dialog
+    $("#dialog").dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            Rejouer: {
+                text: "Rejouer",
+                class: "custom-button",
+                click: function () {
+                    $(this).dialog("close");
+                    score = 0;
+                    $("h1 span").text(score);
+                    gameOver = false;
+                    random();
+                    endOfParty();
+                },
+            },
+            Quitter: {
+                text: "Quitter",
+                class: "custom-button",
+                click: function () {
+                    finalMusic.play();
+                    $(this).dialog("option", "title", "Nouveau titre");
+                    $(this).html("<p>Au revoir et à bientôt pour de nouvelles aventure !</p>");
+                    $(this).dialog("option", "buttons", {});
+                },
+            },
+        }
+
+    });
+
+    // Appeler la fonction endOfParty()
     function endOfParty() {
-        let durationOfGame = setTimeout(() => {
-            $(window).dialog({
-                modal: true,
-                buttons: {
-                    Rejouer: function () {
-                        $(this).dialog("close");
-                        score = 0;
-                        $("h1 span").text(score);
-                        random();
-                        endOfParty();
-                    },
-                    Quitter: function () {
-                        $(this).dialog("close");
-                    }
-                }
-            });
+        durationOfGame = setTimeout(() => {
+            gameOver = true;
+            clearTimeout(timer);
+            $("#finalscore").text(score);
+            $("#dialog").dialog("open");
         }, 20000);
     }
+
     random()
     endOfParty()
 });
