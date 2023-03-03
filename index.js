@@ -6,6 +6,7 @@ $(document).ready(function () {
     let gameOver = false;
     const sound = new Audio("assets/assets_smash.mp3");
     const music = new Audio("assets/music.mp3");
+    music.loop = true;
     const finalMusic = new Audio("assets/end.mp3");
 
 
@@ -19,9 +20,12 @@ $(document).ready(function () {
     window.addEventListener('mouseup', () => {
         $(".cursor").removeClass('active');
     })
-    $(window).on('load', function () {
+    // $(window).on('load', function () {
+    //     music.play();
+    // })
+    $(music).on('canplaythrough', () => {
         music.play();
-    })
+    });
 
 
     function random() {
@@ -29,7 +33,7 @@ $(document).ready(function () {
             return;
         }
         const i = Math.floor(Math.random() * holes.length);
-        const time = Math.floor(Math.random() * (1500 - 450 + 1) + 450)
+        const time = Math.floor(Math.random() * (1500 - 550 + 1) + 550)
         const hole = holes[i];
 
         const newImg = $("<img>")
@@ -83,7 +87,7 @@ $(document).ready(function () {
                 click: function () {
                     finalMusic.play();
                     $(this).dialog("option", "title", "Nouveau titre");
-                    $(this).html("<p>Au revoir et à bientôt pour de nouvelles aventure !</p>");
+                    $(this).html("<p class='final_text'>Au revoir et à bientôt pour de nouvelles aventure !</p>");
                     $(this).dialog("option", "buttons", {});
                 },
             },
@@ -93,12 +97,16 @@ $(document).ready(function () {
 
     // Appeler la fonction endOfParty()
     function endOfParty() {
+        if ($(".mole")) {
+            $(".mole").remove();
+        }
         durationOfGame = setTimeout(() => {
             gameOver = true;
             clearTimeout(timer);
             $("#finalscore").text(score);
             $("#dialog").dialog("open");
         }, 20000);
+
     }
 
     random()
