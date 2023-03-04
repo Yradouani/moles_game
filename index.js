@@ -4,11 +4,12 @@ $(document).ready(function () {
     let timer = null;
     let durationOfGame = null;
     let gameOver = false;
+    let decompte = 20;
+    let timerInterval;
     const sound = new Audio("assets/assets_smash.mp3");
     const music = new Audio("assets/music.mp3");
     music.loop = true;
     const finalMusic = new Audio("assets/end.mp3");
-
 
     window.addEventListener('mousemove', e => {
         $(".cursor").css("top", e.pageY + 'px');
@@ -20,13 +21,19 @@ $(document).ready(function () {
     window.addEventListener('mouseup', () => {
         $(".cursor").removeClass('active');
     })
-    // $(window).on('load', function () {
-    //     music.play();
-    // })
     $(music).on('canplaythrough', () => {
         music.play();
     });
 
+    function countdown() {
+        $('#timer').text(decompte);
+        if (decompte === 0) {
+            clearInterval(timerInterval);
+            endOfParty();
+        } else {
+            decompte--;
+        }
+    }
 
     function random() {
         if (gameOver) {
@@ -35,11 +42,9 @@ $(document).ready(function () {
         const i = Math.floor(Math.random() * holes.length);
         const time = Math.floor(Math.random() * (1500 - 550 + 1) + 550)
         const hole = holes[i];
-
         const newImg = $("<img>")
         newImg.addClass('mole')
         newImg.attr('src', './assets/57098-transformed.png');
-
         newImg.click(function () {
             score += 1
             sound.play()
@@ -52,9 +57,7 @@ $(document).ready(function () {
                 random()
             }, time)
         })
-
         $(hole).append(newImg)
-
 
         timer = setTimeout(() => {
             newImg.remove();
@@ -62,9 +65,8 @@ $(document).ready(function () {
                 random()
             }
         }, time)
-
     }
-    // Créer la div dialog
+
     $("#dialog").dialog({
         autoOpen: false,
         modal: true,
@@ -77,6 +79,8 @@ $(document).ready(function () {
                     score = 0;
                     $("h1 span").text(score);
                     gameOver = false;
+                    decompte = 20;
+                    timerInterval = setInterval(countdown, 1000);
                     random();
                     endOfParty();
                 },
@@ -87,12 +91,11 @@ $(document).ready(function () {
                 click: function () {
                     finalMusic.play();
                     $(this).dialog("option", "title", "Nouveau titre");
-                    $(this).html("<p class='final_text'>Au revoir et à bientôt pour de nouvelles aventure !</p>");
+                    $(this).html("<p class='final_text'>Au revoir et à bientôt pour de nouvelles aventures !</p>");
                     $(this).dialog("option", "buttons", {});
                 },
             },
         }
-
     });
 
     // Appeler la fonction endOfParty()
@@ -100,15 +103,21 @@ $(document).ready(function () {
         if ($(".mole")) {
             $(".mole").remove();
         }
-        durationOfGame = setTimeout(() => {
+        // durationOfGame = setTimeout(() => {
+        //     gameOver = true;
+        //     clearTimeout(timer);
+        //     $("#finalscore").text(score);
+        //     $("#dialog").dialog("open");
+        // }, 21000);
+        if (decompte === 0) {
             gameOver = true;
             clearTimeout(timer);
             $("#finalscore").text(score);
             $("#dialog").dialog("open");
-        }, 20000);
-
+        }
     }
 
+    timerInterval = setInterval(countdown, 1000);
     random()
     endOfParty()
 });
