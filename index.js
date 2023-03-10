@@ -43,13 +43,15 @@ $(document).ready(function () {
             function displayGame() {
                 document.querySelector("#oldgame").innerHTML = "";
                 if (userInfos !== []) {
-                    for (let i = 0; i < userInfos.length; i++) {
+                    console.log(userInfos.length)
+                    let length = userInfos.length
+                    for (let i = userInfos.length - 1; (i >= (userInfos.length - 6)) && i >= 0; i--) {
                         if (userInfos[i].name == name) {
                             document.querySelector("#oldgame").innerHTML += `
-                           Date de la partie : ${userInfos[i].date}<br/>
-                           Score : ${userInfos[i].score}<br/>
-                           Heure : ${userInfos[i].time}<br/><br/><br/>
-                           `
+                            Date de la partie : ${userInfos[i].date}<br/>
+                            Score : ${userInfos[i].score}<br/>
+                            Heure : ${userInfos[i].time}<br/><br/><br/>
+                          `;
                         }
                     }
                 }
@@ -95,37 +97,30 @@ $(document).ready(function () {
                     }
                 }, time)
             }
-
+            if ($("#rejouer")) {
+                $("#rejouer").click(function () {
+                    $("#dialog").dialog("close");
+                    score = 0;
+                    $("h1 span").text(score);
+                    gameOver = false;
+                    decompte = 20;
+                    timerInterval = setInterval(countdown, 1000);
+                    random();
+                    displayGame();
+                    endOfParty();
+                })
+            }
+            if ($("#quitter")) {
+                $("#quitter").click(function () {
+                    finalMusic.play();
+                    $("#dialog").dialog("option", "title", "Nouveau titre");
+                    $("#dialog").html("<p class='final_text'>Au revoir et à bientôt pour de nouvelles aventures !</p>");
+                    $("#dialog").dialog("option", "buttons", {});
+                })
+            }
             $("#dialog").dialog({
                 autoOpen: false,
                 modal: true,
-                buttons: {
-                    Rejouer: {
-                        text: "Rejouer",
-                        class: "custom-button",
-                        click: function () {
-                            $(this).dialog("close");
-                            score = 0;
-                            $("h1 span").text(score);
-                            gameOver = false;
-                            decompte = 20;
-                            timerInterval = setInterval(countdown, 1000);
-                            random();
-                            displayGame();
-                            endOfParty();
-                        },
-                    },
-                    Quitter: {
-                        text: "Quitter",
-                        class: "custom-button",
-                        click: function () {
-                            finalMusic.play();
-                            $(this).dialog("option", "title", "Nouveau titre");
-                            $(this).html("<p class='final_text'>Au revoir et à bientôt pour de nouvelles aventures !</p>");
-                            $(this).dialog("option", "buttons", {});
-                        },
-                    },
-                }
             });
 
             // Appeler la fonction endOfParty()
@@ -133,12 +128,7 @@ $(document).ready(function () {
                 if ($(".mole")) {
                     $(".mole").remove();
                 }
-                // durationOfGame = setTimeout(() => {
-                //     gameOver = true;
-                //     clearTimeout(timer);
-                //     $("#finalscore").text(score);
-                //     $("#dialog").dialog("open");
-                // }, 21000);
+
                 if (decompte === 0) {
                     gameOver = true;
                     clearTimeout(timer);

@@ -105,7 +105,7 @@ h2 {
     justify-content: center;
 }
 
-#dialog div {
+#dialog-content {
     background: rgb(241, 235, 235);
     color: black;
     padding: 15px;
@@ -198,4 +198,8 @@ h2 {
 
 #game {
     width: 80%;
+}
+
+.ui-dialog-titlebar {
+    display: none;
 }

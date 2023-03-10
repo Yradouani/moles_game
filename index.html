@@ -15,15 +15,19 @@
 </head>
 
 <body>
-    <div id="dialog" title="Fin de partie">
-        <div>
-            <h2>FIN DE PARTIE</h2>
-            <p>Vous avez <span id="finalscore"></span> point(s)</p>
-            <p>Voulez-vous rejouer ?</p>
-        </div>
-    </div>
 
-    <div id="main-content">
+    <div id="main-content" class="h-100">
+        <div id="dialog" title="Fin de partie">
+            <div id="dialog-content">
+                <h2>FIN DE PARTIE</h2>
+                <p>Vous avez <span id="finalscore"></span> point(s)</p>
+                <p>Voulez-vous rejouer ?</p>
+                <div class="d-flex justify-content-around mt-5 px-5">
+                    <button class="custom-button" id="rejouer">Rejouer</button>
+                    <button class="custom-button" id="quitter">Quitter</button>
+                </div>
+            </div>
+        </div>
         <div class="navboard px-2">
             <h3 id="gamer-name" class="w-100 text-center my-4"></h3>
             <div id="oldgame"></div>
